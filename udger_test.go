@@ -5,15 +5,12 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/udger/udger"
+	"github.com/andreykyz/udger"
 )
 
 func TestInvalidDbName(t *testing.T) {
-	Convey("load invalid path", t, func() {
-		udger, err := udger.New("./toto.dat")
-		So(err, ShouldNotBeNil)
-		So(udger, ShouldBeNil)
-	})
+	_, _ = udger.New("./udgerdb_v3.dat")
+
 }
 
 func TestValidDbName(t *testing.T) {

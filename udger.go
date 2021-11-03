@@ -3,11 +3,10 @@ package udger
 
 import (
 	"database/sql"
-	"errors"
 	"os"
 	"strings"
 
-	"github.com/glenn-brown/golang-pkg-pcre/src/pkg/pcre"
+	"github.com/jemmic/go-pcre2"
 )
 
 // New creates a new instance of Udger and load all the database in memory to allow fast lookup
@@ -93,12 +92,8 @@ func (udger *Udger) Lookup(ua string) (*Info, error) {
 }
 
 func (udger *Udger) cleanRegex(r string) string {
-	if strings.HasSuffix(r, "/si") {
-		r = r[:len(r)-3]
-	}
-	if strings.HasPrefix(r, "/") {
-		r = r[1:]
-	}
+	_ = strings.TrimSuffix(r, "/si")
+	_ = strings.TrimPrefix(r, "/")
 
 	return r
 }
@@ -142,11 +137,11 @@ func (udger *Udger) init() error {
 		var d rexData
 		rows.Scan(&d.ID, &d.Regex)
 		d.Regex = udger.cleanRegex(d.Regex)
-		r, err := pcre.Compile(d.Regex, pcre.CASELESS)
+		r, err := pcre2.Compile(d.Regex, pcre2.CASELESS)
 		if err != nil {
-			return errors.New(err.String())
+			return err
 		}
-		d.RegexCompiled = r
+		d.RegexCompiled = *r
 		udger.rexBrowsers = append(udger.rexBrowsers, d)
 	}
 	rows.Close()
@@ -159,11 +154,11 @@ func (udger *Udger) init() error {
 		var d rexData
 		rows.Scan(&d.ID, &d.Regex)
 		d.Regex = udger.cleanRegex(d.Regex)
-		r, err := pcre.Compile(d.Regex, pcre.CASELESS)
+		r, err := pcre2.Compile(d.Regex, pcre2.CASELESS)
 		if err != nil {
-			return errors.New(err.String())
+			return err
 		}
-		d.RegexCompiled = r
+		d.RegexCompiled = *r
 		udger.rexDevices = append(udger.rexDevices, d)
 	}
 	rows.Close()
@@ -176,11 +171,11 @@ func (udger *Udger) init() error {
 		var d rexData
 		rows.Scan(&d.ID, &d.Regex)
 		d.Regex = udger.cleanRegex(d.Regex)
-		r, err := pcre.Compile(d.Regex, pcre.CASELESS)
+		r, err := pcre2.Compile(d.Regex, pcre2.CASELESS)
 		if err != nil {
-			return errors.New(err.String())
+			return err
 		}
-		d.RegexCompiled = r
+		d.RegexCompiled = *r
 		udger.rexOS = append(udger.rexOS, d)
 	}
 	rows.Close()
